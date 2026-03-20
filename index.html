@@ -3,585 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Madeira Trip 2026 | Itinerario Pro</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <title>Madeira Pro 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
     <style>
-        :root {
-            --apple-bg: #f5f5f7;
-            --apple-card: rgba(255, 255, 255, 0.75);
-            --apple-accent: #007aff;
-            --apple-text: #1d1d1f;
-            --apple-sub: #86868b;
-            --ocean: #0066cc;
-            --nature: #34c759;
-            --glass-border: rgba(255, 255, 255, 0.4);
-            --glass-shadow: rgba(0, 0, 0, 0.05);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        body {
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--apple-bg);
-            color: var(--apple-text);
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 122, 255, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(52, 199, 89, 0.05) 0%, transparent 40%);
-            padding-bottom: 100px;
-        }
-
-        /* Header & Progress */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 90px;
-            background: rgba(245, 245, 247, 0.85);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 0 30px;
-            border-bottom: 1px solid rgba(0,0,0,0.03);
-        }
-
-        .header-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .header-logo {
-            font-weight: 900;
-            font-size: 1.3rem;
-            letter-spacing: -0.05em;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .header-logo i { color: var(--ocean); font-size: 1.6rem; }
-
-        .progress-container {
-            width: 100%;
-            height: 6px;
-            background: rgba(0,0,0,0.06);
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-fill {
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--ocean), var(--nature));
-            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        /* Day Navigation */
-        .day-scroller {
-            margin-top: 110px;
-            padding: 10px 20px;
-            display: flex;
-            gap: 12px;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-
-        .day-scroller::-webkit-scrollbar { display: none; }
-
-        .day-btn {
-            padding: 14px 24px;
-            background: var(--apple-card);
-            border: 1px solid var(--glass-border);
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: var(--apple-sub);
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            white-space: nowrap;
-            box-shadow: 0 4px 15px var(--glass-shadow);
-        }
-
-        .day-btn.active {
-            background: var(--apple-text);
-            color: #fff;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-        }
-
-        /* Main Content */
-        .content-area {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
-
-        .day-view { display: none; }
-        .day-view.active { display: block; animation: fadeIn 0.5s ease forwards; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .day-intro {
-            margin-bottom: 30px;
-            padding: 20px 0;
-        }
-
-        .day-intro h2 {
-            font-size: 2.2rem;
-            font-weight: 900;
-            letter-spacing: -0.06em;
-            margin-bottom: 4px;
-        }
-
-        .day-intro p {
-            color: var(--apple-sub);
-            font-weight: 500;
-            font-size: 1.1rem;
-        }
-
-        /* Task Cards */
-        .task-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .task-card {
-            background: var(--apple-card);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 28px;
-            padding: 24px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            box-shadow: 0 8px 30px var(--glass-shadow);
-            cursor: pointer;
-        }
-
-        .task-card:active { transform: scale(0.97); }
-
-        .task-card.completed {
-            opacity: 0.6;
-            background: rgba(255, 255, 255, 0.4);
-        }
-
-        .task-card.completed .check-circle {
-            background: var(--nature);
-            border-color: var(--nature);
-            color: #fff;
-        }
-
-        .task-card.completed .task-title {
-            text-decoration: line-through;
-            color: var(--apple-sub);
-        }
-
-        .check-circle {
-            width: 32px;
-            height: 32px;
-            border: 2px solid #d2d2d7;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            flex-shrink: 0;
-            color: transparent;
-            font-size: 1.2rem;
-        }
-
-        .task-info { flex: 1; }
-
-        .task-time {
-            font-size: 0.75rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--apple-accent);
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .task-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1.3;
-        }
-
-        .task-desc {
-            font-size: 0.85rem;
-            color: var(--apple-sub);
-            margin-top: 6px;
-            font-weight: 400;
-            line-height: 1.4;
-        }
-
-        .warning-tag {
-            background: rgba(255, 59, 48, 0.1);
-            color: #ff3b30;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            margin-top: 10px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* Floating Nav */
-        .bottom-nav {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 400px;
-            height: 70px;
-            background: rgba(29, 29, 31, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            padding: 0 10px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            z-index: 2000;
-        }
-
-        .nav-item {
-            color: rgba(255,255,255,0.4);
-            font-size: 1.6rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .nav-item.active { color: #fff; }
-
-        .nav-item span { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
-
-        /* Restaurant Panel */
-        #restaurants-panel {
-            position: fixed;
-            inset: 0;
-            background: var(--apple-bg);
-            z-index: 3000;
-            display: none;
-            overflow-y: auto;
-            padding: 40px 30px;
-        }
-
-        .panel-close {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            width: 44px;
-            height: 44px;
-            background: #fff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            cursor: pointer;
-            z-index: 3001;
-        }
-
-        .restaurant-list {
-            margin-top: 50px;
-        }
-
-        .res-card {
-            background: #fff;
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border: 1px solid rgba(0,0,0,0.03);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .res-icon {
-            width: 50px;
-            height: 50px;
-            background: rgba(0,122,255,0.1);
-            color: var(--ocean);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
+        :root { --apple-bg: #f5f5f7; --apple-accent: #007aff; --nature: #34c759; --text: #1d1d1f; --sub: #86868b; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Outfit', sans-serif; background: var(--apple-bg); height: 100vh; display: flex; overflow: hidden; }
+        .left-panel { width: 420px; height: 100vh; background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); border-right: 1px solid rgba(0,0,0,0.05); overflow-y: auto; z-index: 100; }
+        .right-panel { flex: 1; position: relative; background: #fff; }
+        header { padding: 30px 24px 20px; }
+        .prog-container { width: 100%; height: 6px; background: rgba(0,0,0,0.06); border-radius: 10px; margin-top: 10px; overflow: hidden; position: relative; }
+        .prog-fill { position: absolute; height: 100%; background: linear-gradient(90deg, #007aff, #34c759); transition: width 0.6s; }
+        .day-strip { display: flex; gap: 8px; padding: 0 24px 20px; overflow-x: auto; }
+        .day-btn { padding: 10px 18px; background: #fff; border-radius: 50px; font-weight: 700; font-size: 0.75rem; border: 1px solid rgba(0,0,0,0.05); cursor: pointer; white-space: nowrap; }
+        .day-btn.active { background: var(--text); color: #fff; }
+        .task-list { padding: 0 20px 100px; display: flex; flex-direction: column; gap: 12px; }
+        .task-card { background: #fff; border-radius: 20px; padding: 16px; border: 1px solid rgba(0,0,0,0.02); transition: 0.3s; cursor: pointer; }
+        .task-card.done { opacity: 0.5; background: rgba(255,255,255,0.4); }
+        .task-meta { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.65rem; font-weight: 800; color: var(--apple-accent); text-transform: uppercase; }
+        .drive-time { color: var(--sub); display: flex; align-items: center; gap: 3px; }
+        .task-title { font-size: 0.9rem; font-weight: 800; margin-bottom: 2px; }
+        .task-desc { font-size: 0.75rem; color: var(--sub); line-height: 1.3; }
+        .btn-maps { margin-top: 10px; display: inline-flex; align-items: center; gap: 5px; padding: 6px 10px; background: rgba(0,122,255,0.08); color: var(--apple-accent); border-radius: 8px; font-size: 0.65rem; font-weight: 800; text-decoration: none; }
+        #madeira-map { width: 100%; height: 100%; }
+        .map-pt { fill: #fff; stroke: var(--apple-accent); stroke-width: 2; transition: 0.3s; }
+        .map-pt.done { fill: var(--nature); stroke: var(--nature); }
+        .route-line { fill: none; stroke: rgba(0,122,255,0.1); stroke-width: 2; stroke-dasharray: 4 2; }
+        .route-done { fill: none; stroke: var(--nature); stroke-width: 3; stroke-linecap: round; transition: 0.5s; }
+        .float-btn { position: fixed; bottom: 20px; left: 20px; width: 380px; padding: 15px; background: var(--text); color: #fff; border-radius: 15px; text-align: center; font-weight: 800; font-size: 0.7rem; cursor: pointer; z-index: 1000; }
+        #res-page { position: fixed; inset: 0; background: var(--apple-bg); z-index: 5000; display: none; padding: 40px; }
     </style>
 </head>
 <body>
-
-    <header>
-        <div class="header-top">
-            <div class="header-logo">
-                <i class="ph-fill ph-mountains"></i>
-                MADEIRA 2026
+    <div class="left-panel">
+        <header>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="font-weight:900; font-size:1.1rem;">MADEIRA 2026</h2>
+                <span id="p-text" style="font-size:0.75rem; font-weight:900;">0%</span>
             </div>
-            <div id="progress-text" style="font-size: 0.8rem; font-weight: 900; color: var(--apple-sub);">0%</div>
+            <div class="prog-container"><div id="p-bar" class="prog-fill"></div></div>
+        </header>
+        <div class="day-strip">
+            <button class="day-btn active" onclick="setDay(1)">Día 1</button>
+            <button class="day-btn" onclick="setDay(2)">Día 2</button>
+            <button class="day-btn" onclick="setDay(3)">Día 3</button>
+            <button class="day-btn" onclick="setDay(4)">Día 4</button>
         </div>
-        <div class="progress-container">
-            <div id="progress-bar" class="progress-fill"></div>
-        </div>
-    </header>
-
-    <div class="day-scroller" id="day-nav">
-        <button class="day-btn active" onclick="switchDay(1)">Día 1</button>
-        <button class="day-btn" onclick="switchDay(2)">Día 2</button>
-        <button class="day-btn" onclick="switchDay(3)">Día 3</button>
-        <button class="day-btn" onclick="switchDay(4)">Día 4</button>
+        <div id="t-list" class="task-list"></div>
+        <div class="float-btn" onclick="toggleRes()">GUÍA GASTRONÓMICA 🐟</div>
     </div>
-
-    <main class="content-area" id="main-content">
-        <!-- Content will be injected by JS -->
-    </main>
-
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="showPanel('agenda')">
-            <i class="ph ph-calendar-blank"></i>
-            <span>Planing</span>
-        </div>
-        <div class="nav-item" onclick="openMap()">
-            <i class="ph ph-map-trifold"></i>
-            <span>Mapa</span>
-        </div>
-        <div class="nav-item" onclick="showRestaurants()">
-            <i class="ph ph-fork-knife"></i>
-            <span>Comida</span>
+    <div class="right-panel"><svg id="madeira-map" viewBox="0 0 1000 500"></svg></div>
+    <div id="res-page">
+        <div style="display:flex; justify-content:space-between;"><h1>Gastronomía 🐟</h1><button onclick="toggleRes()">X</button></div>
+        <div style="margin-top:20px;">
+            <p><b>Bela 5 Snack Bar</b> - Icono ⭐️ (Claudia 10/10)</p>
+            <p><b>Beer Garden</b> - Nikita 🍦</p>
+            <p><b>Frágil Smash Burger</b> - Best burgers 🍔</p>
         </div>
     </div>
-
-    <!-- Restaurants Panel -->
-    <div id="restaurants-panel">
-        <div class="panel-close" onclick="closePanel('restaurants')"><i class="ph ph-x"></i></div>
-        <h2 style="font-size: 2.5rem; font-weight: 950; letter-spacing: -0.06em; margin-bottom: 30px;">Funchal Eats 🐟</h2>
-        <div class="restaurant-list">
-            <div class="res-card">
-                <div class="res-icon"><i class="ph ph-star-fill"></i></div>
-                <div>
-                    <h4 style="font-weight: 800;">Bela 5 Snack Bar</h4>
-                    <p style="font-size: 0.8rem; color: var(--apple-sub);">Recomendado por Claudia (10/10)</p>
-                </div>
-            </div>
-            <div class="res-card">
-                <div class="res-icon"><i class="ph ph-beer-bottle"></i></div>
-                <div>
-                    <h4 style="font-weight: 800;">Beer Garden</h4>
-                    <p style="font-size: 0.8rem; color: var(--apple-sub);">Probando la Nikita 🍦</p>
-                </div>
-            </div>
-            <div class="res-card">
-                <div class="res-icon"><i class="ph ph-hamburger"></i></div>
-                <div>
-                    <h4 style="font-weight: 800;">Frágil Smash Burger</h4>
-                    <p style="font-size: 0.8rem; color: var(--apple-sub);">Best burgers in town</p>
-                </div>
-            </div>
-            <div class="res-card">
-                <div class="res-icon"><i class="ph ph-coffee"></i></div>
-                <div>
-                    <h4 style="font-weight: 800;">Mercearia D Mecía</h4>
-                    <p style="font-size: 0.8rem; color: var(--apple-sub);">Ideal para desayunar</p>
-                </div>
-            </div>
-            <div class="res-card">
-                <div class="res-icon"><i class="ph ph-waves"></i></div>
-                <div>
-                    <h4 style="font-weight: 800;">Barreirinha Café</h4>
-                    <p style="font-size: 0.8rem; color: var(--apple-sub);">Vistas chulas y tranqui</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
         const itinerary = [
-            {
-                day: 1,
-                title: "Llegada + Funchal",
-                subtitle: "CR7 & Jardines de Monte",
-                tasks: [
-                    { id: "d1-vuelo", time: "06:05", title: "✈️ Vuelo desde Oporto", desc: "Llegada al paraíso a las 08:10." },
-                    { id: "d1-coche", time: "08:30", title: "🚗 Recogida del Coche", desc: "Traslado al alojamiento (15-20 min). Dejar maletas." },
-                    { id: "d1-centro", time: "MAÑANA", title: "🚶‍♂️ Paseo por el Centro", desc: "Casco antiguo, Rua de Santa Maria (street art) y Mercado dos Lavradores (45 min)." },
-                    { id: "d1-cr7", time: "12:00", title: "⚽ Museo CR7 + Estatua", desc: "Visita de 45-60 min y foto de rigor con la estatua." },
-                    { id: "d1-comida", time: "13:30", title: "🍽️ Comida en Funchal", desc: "Bela Snack Bar recomendado (10/10)." },
-                    { id: "d1-telef", time: "15:30", title: "🚠 Teleférico a Monte", desc: "Subida para vistas espectaculares.", warning: "NO SUBIR EN COCHE: Peligroso y lío para bajar." },
-                    { id: "d1-jard", time: "16:30", title: "🌺 Jardines Monte Palace", desc: "Paseo relajado por el paraíso botánico (1h30)." },
-                    { id: "d1-bajada", time: "18:00", title: "🛷 Bajada Tradicional", desc: "Carros de cesto o teleférico de vuelta." },
-                    { id: "d1-atardecer", time: "20:00", title: "🌅 Atardecer en el Puerto", desc: "Paseo chill y mirador marítimo." },
-                    { id: "d1-beer", time: "NOCHE", title: "🍻 Beer Garden", desc: "Probar la famosa Nikita." }
-                ]
-            },
-            {
-                day: 2,
-                title: "Ballenas & Costa Este",
-                subtitle: "Miradores y Mar",
-                tasks: [
-                    { id: "d2-dolphin", time: "PRONTO", title: "🐬 Avistamiento de Ballenas", desc: "Excursión en barco desde el puerto (2.5 - 3h)." },
-                    { id: "d2-comida", time: "13:00", title: "🍽️ Almuerzo Puerto", desc: "Cerca del puerto de Funchal." },
-                    { id: "d2-pico", time: "15:00", title: "🏔️ Pico do Areeiro", desc: "40 min 🚗 desde Funchal. Fotos y vistas (45 min)." },
-                    { id: "d2-cristo", time: "17:00", title: "⛪ Cristo Rei do Garajau", desc: "Mirador espectacular y paseo corto." },
-                    { id: "d2-porto", time: "18:30", title: "🌊 Porto da Cruz", desc: "Paseo, café y playa de rocas. Llevar bikini/bañador 👙" },
-                    { id: "d2-cena", time: "NOCHE", title: "🌙 Regreso a Funchal", desc: "35 min 🚗. Cena relajada." }
-                ]
-            },
-            {
-                day: 3,
-                title: "Roadtrip Oeste",
-                subtitle: "La Ruta de las Cascadas",
-                tasks: [
-                    { id: "d3-salida", time: "08:15", title: "🚗 Salida Roadtrip", desc: "Dirección Cabo Girão." },
-                    { id: "d3-girao", time: "09:00", title: "🌉 Cabo Girão", desc: "Pasarela de cristal a 580m de altura (30 min)." },
-                    { id: "d3-lobos", time: "10:00", title: "🛶 Câmara de Lobos", desc: "Pueblo de pescadores. Café y paseo (30 min)." },
-                    { id: "d3-sol", time: "11:00", title: "☀️ Ponta do Sol", desc: "El pueblo más soleado. Casitas coloridas." },
-                    { id: "d3-anjos", time: "11:45", title: "🚿 Cascata dos Anjos", desc: "La cascada que cae sobre la carretera. Parada rápida." },
-                    { id: "d3-seixal", time: "13:30", title: "🏖️ Praia do Seixal", desc: "Arena negra y vistas de película (1h)." },
-                    { id: "d3-veu", time: "14:45", title: "👰 Cascata Véu da Noiva", desc: "Mirador rápido a la cascada (20 min)." },
-                    { id: "d3-comida", time: "15:15", title: "🐟 Comida en Seixal", desc: "Bar Praia de Laje (Solo Pescado)." },
-                    { id: "d3-piscinas", time: "16:30", title: "🏊‍♂️ Porto Moniz", desc: "Piscinas naturales de origen volcánico. Relax (1h30)." },
-                    { id: "d3-achadas", time: "18:30", title: "🚠 Achadas da Cruz", desc: "Teleférico alucinante y naturaleza salvaje (1h)." },
-                    { id: "d3-funchal", time: "NOCHE", title: "🏠 Regreso a Funchal", desc: "1h 30 min de conducción. Fin del gran tour." }
-                ]
-            },
-            {
-                day: 4,
-                title: "São Lourenço & Santana",
-                subtitle: "Casitas y Aventura",
-                tasks: [
-                    { id: "d4-ponta", time: "PRONTO", title: "⛰️ Ponta de São Lourenço", desc: "Caminata ligera por los acantilados (1 - 2h)." },
-                    { id: "d4-santana", time: "12:00", title: "🛖 Casas de Santana", desc: "Visita corta a las casas típicas (45 min)." },
-                    { id: "d4-comida", time: "13:30", title: "🍽️ Comida en Santana", desc: "RESERVAR: Cabo Aéreo Café." },
-                    { id: "d4-tirolina", time: "16:00", title: "🎢 Tirolina Ribeira Janela", desc: "Adrenalina pura. Ir antes de las 19:00h." },
-                    { id: "d4-faja", time: "17:30", title: "🥾 Fajã do Rodrigues", desc: "Mini caminata opcional si hay energía." },
-                    { id: "d4-cena", time: "21:00", title: "🍷 Cena de Despedida", desc: "Pescado fresco, Poncha y Vino de Madeira." }
-                ]
-            }
+            { d: 1, title: "Funchal + Monte", pts: [
+                { id: "d1-v", t: "06:05", title: "Vuelo Oporto", lat: 32.693, lng: -16.772, desc: "Llegada Aeropuerto." },
+                { id: "d1-c", t: "08:30", title: "Coche & Hotel", lat: 32.650, lng: -16.908, d: "15 min 🚗", desc: "Check-in." },
+                { id: "d1-f", t: "MAÑANA", title: "Centro Funchal", lat: 32.648, lng: -16.908, d: "5 min 🚶‍♂️", desc: "Rua Santa Maria." },
+                { id: "d1-cr7", t: "12:00", title: "Museo CR7", lat: 32.644, lng: -16.914, d: "10 min 🚶‍♂️", desc: "Estatua & Museo." },
+                { id: "d1-m", t: "15:30", title: "Funchal - Monte", lat: 32.675, lng: -16.903, d: "Teleférico 🚠", desc: "Jardines Palace." },
+                { id: "d1-p", t: "NOCHE", title: "Puerto Funchal", lat: 32.643, lng: -16.911, d: "Bajada 🛷", desc: "Beer Garden." }
+            ]},
+            { d: 2, title: "Este & Ballenas", pts: [
+                { id: "d2-b", t: "PRONTO", title: "Puerto Funchal", lat: 32.643, lng: -16.911, desc: "Excursión Ballenas." },
+                { id: "d2-a", t: "15:00", title: "Pico do Areeiro", lat: 32.735, lng: -16.928, d: "40 min 🚗", desc: "Vistas 1818m." },
+                { id: "d2-g", t: "17:00", title: "Cristo Rei", lat: 32.636, lng: -16.852, d: "25 min 🚗", desc: "Garajau mirador." },
+                { id: "d2-pc", t: "18:30", title: "Porto da Cruz", lat: 32.776, lng: -16.829, d: "25 min 🚗", desc: "Café & Bikini." }
+            ]},
+            { d: 3, title: "Costa Oeste", pts: [
+                { id: "d3-g", t: "09:00", title: "Cabo Girão", lat: 32.656, lng: -17.006, d: "22 min 🚗", desc: "Skywalk." },
+                { id: "d3-cl", t: "10:00", title: "Câmara Lobos", lat: 32.649, lng: -16.974, d: "10 min 🚗", desc: "Pueblo pescadores." },
+                { id: "d3-ps", t: "11:30", title: "Ponta do Sol", lat: 32.678, lng: -17.106, d: "19 min 🚗", desc: "Casitas colores." },
+                { id: "d3-ai", t: "12:30", title: "Cascata Anjos", lat: 32.682, lng: -17.114, d: "8 min 🚗", desc: "Cascada carretera." },
+                { id: "d3-sx", t: "TARDE", title: "Praia Seixal", lat: 32.825, lng: -17.103, d: "40 min 🚗", desc: "Arena negra." },
+                { id: "d3-pm", t: "16:30", title: "Porto Moniz", lat: 32.868, lng: -17.172, d: "15 min 🚗", desc: "Piscinas naturales." },
+                { id: "d3-ac", t: "18:30", title: "Achadas Cruz", lat: 32.852, lng: -17.208, d: "20 min 🚗", desc: "Teleférico salvaje." }
+            ]},
+            { d: 4, title: "Norte & Tirolina", pts: [
+                { id: "d4-sl", t: "09:30", title: "São Lourenço", lat: 32.743, lng: -16.701, d: "39 min 🚗", desc: "Acantilados." },
+                { id: "d4-st", t: "12:00", title: "Santana", lat: 32.805, lng: -16.883, d: "32 min 🚗", desc: "Casas típicas." },
+                { id: "d4-rj", t: "16:00", title: "Ribeira Janela", lat: 32.852, lng: -17.151, d: "56 min 🚗", desc: "Tirolina." },
+                { id: "d4-c", t: "21:00", title: "Cena Despedida", lat: 32.643, lng: -16.911, d: "40 min 🚗", desc: "Vino & Poncha." }
+            ]}
         ];
+        let doneIds = JSON.parse(localStorage.getItem('m_2026')) || {};
+        let activeD = 1;
 
-        let completedTasks = JSON.parse(localStorage.getItem('madeira_tasks')) || {};
-        let currentDay = 1;
+        const projection = d3.geoMercator().center([-16.95, 32.75]).scale(40000).translate([500, 250]);
+        const path = d3.line().x(p => projection(p)[0]).y(p => projection(p)[1]).curve(d3.curveBasis);
+        const island = [[-17.25, 32.88], [-16.7, 32.8], [-16.65, 32.7], [-16.9, 32.6], [-17.25, 32.75], [-17.25, 32.88]];
 
-        function renderDay(dayNum) {
-            const container = document.getElementById('main-content');
-            const data = itinerary.find(d => d.day === dayNum);
-            
-            let html = `
-                <div class="day-view active">
-                    <div class="day-intro">
-                        <h2>${data.title}</h2>
-                        <p>${data.subtitle}</p>
-                    </div>
-                    <div class="task-list">
-            `;
-
-            data.tasks.forEach(task => {
-                const isComp = completedTasks[task.id];
-                html += `
-                    <div class="task-card ${isComp ? 'completed' : ''}" onclick="toggleTask('${task.id}')">
-                        <div class="check-circle">
-                            <i class="ph-bold ph-check"></i>
-                        </div>
-                        <div class="task-info">
-                            <div class="task-time">
-                                <i class="ph-fill ph-clock"></i>
-                                ${task.time}
-                            </div>
-                            <div class="task-title">${task.title}</div>
-                            <div class="task-desc">${task.desc}</div>
-                            ${task.warning ? `<div class="warning-tag"><i class="ph-fill ph-warning-circle"></i> ${task.warning}</div>` : ''}
-                        </div>
-                    </div>
-                `;
+        function drawMap() {
+            const svg = d3.select("#madeira-map"); svg.selectAll("*").remove();
+            svg.append("path").attr("d", path(island)).attr("fill", "#f0f2f5").attr("stroke", "#eee");
+            const day = itinerary.find(i => i.d === activeD);
+            const pts = day.pts.map(p => [p.lng, p.lat]);
+            svg.append("path").attr("d", path(pts)).attr("class", "route-line");
+            let lastIdx = -1; day.pts.forEach((p, i) => { if(doneIds[p.id]) lastIdx = i; });
+            if(lastIdx > 0) svg.append("path").attr("d", path(pts.slice(0, lastIdx+1))).attr("class", "route-done");
+            day.pts.forEach(p => {
+                const [x,y] = projection([p.lng, p.lat]);
+                svg.append("circle").attr("cx",x).attr("cy",y).attr("r",5).attr("class",`map-pt ${doneIds[p.id]?'done':''}`).on("click",()=>toggle(p.id));
             });
-
-            html += `</div></div>`;
-            container.innerHTML = html;
-            updateProgress();
         }
 
-        function switchDay(num) {
-            currentDay = num;
-            document.querySelectorAll('.day-btn').forEach((btn, i) => {
-                btn.classList.toggle('active', i + 1 === num);
+        function render() {
+            const list = document.getElementById('t-list'); list.innerHTML = '';
+            const day = itinerary.find(i => i.d === activeD);
+            day.pts.forEach(p => {
+                const card = document.createElement('div'); card.className = `task-card ${doneIds[p.id]?'done':''}`;
+                card.onclick = () => toggle(p.id);
+                card.innerHTML = `<div class="task-meta"><span>${p.t}</span>${p.d?`<span class="drive-time"><i class="ph-fill ph-car"></i>${p.d}</span>`:''}</div><div class="task-title">${p.title}</div><p class="task-desc">${p.desc}</p><a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(p.title+' Madeira')}" class="btn-maps" onclick="event.stopPropagation()">Direcciones</a>`;
+                list.appendChild(card);
             });
-            renderDay(num);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            updateProg();
         }
 
-        function toggleTask(id) {
-            if (completedTasks[id]) {
-                delete completedTasks[id];
-            } else {
-                completedTasks[id] = true;
-                if ('vibrate' in navigator) navigator.vibrate(10);
-            }
-            localStorage.setItem('madeira_tasks', JSON.stringify(completedTasks));
-            renderDay(currentDay);
+        function toggle(id) { if(doneIds[id]) delete doneIds[id]; else doneIds[id]=true; localStorage.setItem('m_2026', JSON.stringify(doneIds)); render(); drawMap(); }
+        function setDay(n) { activeD = n; document.querySelectorAll('.day-btn').forEach((b,i)=>b.classList.toggle('active',i+1===n)); render(); drawMap(); }
+        function updateProg() {
+            let total = 0; itinerary.forEach(i=>total+=i.pts.length);
+            const count = Object.keys(doneIds).length; const p = Math.round((count/total)*100);
+            document.getElementById('p-bar').style.width = p+'%'; document.getElementById('p-text').innerText = p+'%';
         }
-
-        function updateProgress() {
-            const total = itinerary.reduce((acc, d) => acc + d.tasks.length, 0);
-            const done = Object.keys(completedTasks).length;
-            const percent = Math.round((done / total) * 100);
-            
-            document.getElementById('progress-bar').style.width = percent + '%';
-            document.getElementById('progress-text').innerText = percent + '%';
-        }
-
-        function showRestaurants() {
-            document.getElementById('restaurants-panel').style.display = 'block';
-        }
-
-        function closePanel(id) {
-            if (id === 'restaurants') document.getElementById('restaurants-panel').style.display = 'none';
-        }
-
-        function openMap() {
-            alert("🗺️ Mapa Interactivo Madeira 2026: ¡Cargando coordenadas!");
-        }
-
-        // Init
-        renderDay(1);
+        function toggleRes() { const s = document.getElementById('res-page').style; s.display = s.display==='block'?'none':'block'; }
+        setDay(1);
     </script>
 </body>
 </html>
