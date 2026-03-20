@@ -302,8 +302,8 @@
 
         function checkPass() {
             const input = document.getElementById('pass-input').value;
-            // Clave: MADEIRA (en mayúsculas por si acaso)
-            if(input.toUpperCase() === 'MADEIRA') {
+            // Clave personalizada: 4MADEIRA
+            if(input.toUpperCase() === '4MADEIRA') {
                 document.getElementById('auth-wall').classList.add('hidden');
                 init();
                 // Guardar en sesión para no pedir siempre
