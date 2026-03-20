@@ -54,7 +54,7 @@
 
         /* MODAL DE DETALLES */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
-        .modal-content { width: 90%; max-width: 440px; background: #fff; border-radius: 32px; overflow: hidden; position: relative; max-height: 85vh; transform: scale(0.9) translateY(20px); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 30px 60px rgba(0,0,0,0.2); }
+        .modal-content { width: 90%; max-width: 440px; background: #fff; border-radius: 32px; overflow-y: auto; overflow-x: hidden; position: relative; max-height: 85vh; transform: scale(0.9) translateY(20px); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 30px 60px rgba(0,0,0,0.2); }
         .modal-overlay.open { display: flex; opacity: 1; }
         .modal-overlay.open .modal-content { transform: scale(1) translateY(0); }
         
