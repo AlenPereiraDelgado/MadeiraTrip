@@ -346,7 +346,7 @@
                 const card = document.createElement('div');
                 card.className = `task-card ${doneIds[p.id]?'done':''} ${p.optional?'optional':''}`;
                 card.setAttribute('data-id', p.id);
-                card.onclick = () => { if(!document.getElementById('wizard').classList.contains('open')) openModal(p); };
+                card.onclick = () => openModal(p);
                 const finalImg = p.img.startsWith('http') ? `${p.img}?auto=format&fit=crop&q=80&w=800` : p.img;
                 card.innerHTML = `
                     <img class="card-bg" src="${finalImg}" alt="${p.title}" style="object-position: ${p.pos || '50% 50%'}">
