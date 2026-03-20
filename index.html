@@ -107,12 +107,28 @@
         .wizard-btn.primary { background: var(--accent); color: #fff; }
         .wizard-btn.secondary { background: rgba(255,255,255,0.1); color: #fff; }
 
+        .auth-btn { background: var(--accent); color: #fff; border: none; padding: 15px 40px; border-radius: 50px; font-weight: 900; cursor: pointer; transform: scale(1.1); }
+
         /* PASSWORD WALL */
         .auth-overlay { position: fixed; inset: 0; background: #000; z-index: 20000; display: flex; align-items: center; justify-content: center; flex-direction: column; color: #fff; text-align: center; padding: 20px; }
         .auth-overlay.hidden { display: none; }
         .auth-content { max-width: 400px; width: 100%; }
         .auth-input { width: 100%; padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff; text-align: center; font-size: 1.5rem; letter-spacing: 5px; margin: 30px 0; outline: none; }
-        .auth-btn { background: var(--accent); color: #fff; border: none; padding: 15px 40px; border-radius: 50px; font-weight: 900; cursor: pointer; transform: scale(1.1); }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            body { flex-direction: column; overflow-y: auto; overflow-x: hidden; height: auto; }
+            .left-panel { width: 100%; height: auto; border-right: none; overflow: visible; }
+            .right-panel { width: 100%; height: 500px; order: 2; border-top: 1px solid rgba(0,0,0,0.05); }
+            .task-list { padding-bottom: 40px; }
+            .filter-switch-wrap { position: relative; }
+            header { padding: 30px 20px 10px; }
+            .day-strip { padding: 10px 20px; }
+            .filter-switch { margin: 0 20px; }
+            .task-list { padding: 0 20px 40px; }
+            .layer-fab { top: 20px; right: 20px; }
+            .layer-menu { top: 80px; right: 20px; }
+        }
     </style>
 </head>
 <body>
