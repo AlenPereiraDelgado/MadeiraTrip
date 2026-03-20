@@ -3,68 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Madeira Pro 2026 | Ultimate Explorer</title>
+    <title>Madeira Precision 2026 | Centro de Mando Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
     <style>
-        :root { --apple-bg: #f5f5f7; --apple-accent: #007aff; --nature: #34c759; --text: #1d1d1f; --sub: #86868b; }
+        :root { --apple-bg: #f5f5f7; --accent: #007aff; --nature: #34c759; --text: #1d1d1f; --sub: #86868b; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
         body { font-family: 'Outfit', sans-serif; background: var(--apple-bg); height: 100vh; display: flex; overflow: hidden; }
         
         .left-panel { width: 450px; height: 100vh; background: #fff; border-right: 1px solid rgba(0,0,0,0.08); overflow-y: auto; z-index: 100; scrollbar-width: none; }
         .left-panel::-webkit-scrollbar { display: none; }
-        .right-panel { flex: 1; position: relative; background: #fff; background-image: radial-gradient(#eee 1px, transparent 1px); background-size: 20px 20px; }
+        .right-panel { flex: 1; position: relative; background: #fff; }
         
         header { padding: 40px 30px 20px; }
         .prog-container { width: 100%; height: 8px; background: rgba(0,0,0,0.06); border-radius: 10px; margin-top: 15px; overflow: hidden; position: relative; }
         .prog-fill { position: absolute; height: 100%; background: linear-gradient(90deg, #007aff, #34c759); transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
         
-        .day-strip { display: flex; gap: 10px; padding: 0 30px 25px; overflow-x: auto; }
+        .day-strip { display: flex; gap: 10px; padding: 0 30px 25px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid rgba(0,0,0,0.03); margin-bottom: 20px; position: sticky; top: 0; background: #fff; z-index: 20; }
+        .day-strip::-webkit-scrollbar { display: none; }
         .day-btn { padding: 12px 24px; background: #f2f2f7; border-radius: 50px; font-weight: 800; font-size: 0.8rem; border: none; cursor: pointer; white-space: nowrap; transition: 0.3s; color: var(--sub); }
-        .day-btn.active { background: var(--text); color: #fff; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        
+        .day-btn.active { background: var(--text); color: #fff; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+        .btn-gast { background: rgba(0, 122, 255, 0.08); color: var(--accent); }
+        .btn-gast.active { background: var(--accent); color: #fff; }
+
         .task-list { padding: 0 25px 120px; display: flex; flex-direction: column; gap: 18px; }
         
         /* Premium Image Cards */
         .task-card { 
-            position: relative; height: 180px; border-radius: 25px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s;
+            position: relative; height: 160px; border-radius: 25px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s;
             background-size: cover; background-position: center;
         }
-        .task-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%); }
-        .task-card:hover { transform: scale(1.02); box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
-        .task-card.done { opacity: 0.6; filter: grayscale(0.8); }
+        .task-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 60%, transparent 100%); }
+        .task-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
+        .task-card.done { opacity: 0.5; filter: grayscale(0.5); }
         
         .card-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; z-index: 2; color: #fff; }
-        .card-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.7rem; font-weight: 900; letter-spacing: 0.5px; opacity: 0.9; }
-        .card-title { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 4px; }
-        .card-desc { font-size: 0.75rem; opacity: 0.8; line-height: 1.2; font-weight: 400; }
+        .card-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 0.65rem; font-weight: 900; letter-spacing: 0.5px; }
+        .card-title { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 2px; }
+        .card-desc { font-size: 0.72rem; opacity: 0.8; line-height: 1.2; font-weight: 400; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         
         .btn-maps { 
             position: absolute; top: 15px; right: 15px; width: 35px; height: 35px; background: rgba(255,255,255,0.25); backdrop-filter: blur(10px); 
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; z-index: 10; transition: 0.3s;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; z-index: 10; font-size: 1rem;
         }
-        .btn-maps:hover { background: #fff; color: var(--apple-accent); transform: rotate(15deg); }
 
         .check-circle { 
             position: absolute; top: 15px; left: 15px; width: 30px; height: 30px; border: 2px solid rgba(255,255,255,0.5); border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; color: transparent; z-index: 10; font-size: 1rem;
+            display: flex; align-items: center; justify-content: center; color: transparent; z-index: 10;
         }
         .task-card.done .check-circle { background: var(--nature); border-color: var(--nature); color: #fff; }
 
-        /* Map Styling */
+        /* Map Styling (Realistic Madeira Silhouette) */
         #madeira-map { width: 100%; height: 100%; }
-        .island-shape { fill: #fcfcfd; stroke: #333; stroke-width: 3.5; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.05)); }
+        .island-shape { fill: #fcfcfd; stroke: #1d1d1f; stroke-width: 2.5; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.06)); transition: all 0.5s; stroke-linejoin: round; }
         
-        .route-path { fill: none; stroke: rgba(0, 122, 255, 0.1); stroke-width: 4; stroke-dasharray: 8 4; stroke-linecap: round; }
-        .route-solid { fill: none; stroke: var(--nature); stroke-width: 6; stroke-linecap: round; transition: 0.8s; filter: drop-shadow(0 0 5px var(--nature)); }
+        .route-path { fill: none; stroke: rgba(0, 122, 255, 0.08); stroke-width: 5; stroke-dasharray: 10 5; stroke-linecap: round; }
+        .route-solid { fill: none; stroke: var(--nature); stroke-width: 7; stroke-linecap: round; transition: 1s; filter: drop-shadow(0 0 4px var(--nature)); }
         
-        .map-marker { fill: #fff; stroke: var(--apple-accent); stroke-width: 3; transition: 0.4s; cursor: pointer; }
+        .map-marker { fill: #fff; stroke: var(--accent); stroke-width: 3; transition: 0.4s; cursor: pointer; }
         .map-marker.done { fill: var(--nature); stroke: var(--nature); r: 8; }
-        .map-label { font-size: 11px; font-weight: 900; fill: #1d1d1f; pointer-events: none; text-transform: uppercase; letter-spacing: 0.5px; }
+        .map-label { font-size: 9px; font-weight: 900; fill: #1d1d1f; pointer-events: none; text-transform: uppercase; letter-spacing: 0.3px; paint-order: stroke; stroke: #fff; stroke-width: 2.5px; }
 
-        .float-btn { position: fixed; bottom: 25px; left: 25px; width: 400px; padding: 20px; background: var(--text); color: #fff; border-radius: 20px; font-weight: 800; font-size: 0.8rem; cursor: pointer; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; justify-content: space-between; }
-        #res-page { position: fixed; inset: 0; background: #fff; z-index: 5000; display: none; padding: 50px; }
+        /* Restaurant List Style */
+        .res-list { padding: 0 25px 120px; display: grid; grid-template-columns: 1fr; gap: 15px; }
+        .res-card { background: #fff; border-radius: 20px; border: 1px solid rgba(0,0,0,0.06); padding: 15px; display: flex; align-items: center; gap: 15px; transition: 0.3s; cursor: pointer; }
+        .res-card:hover { transform: translateX(5px); border-color: var(--accent); }
+        .res-img { width: 60px; height: 60px; background: #f2f2f7; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+        .res-info h3 { font-size: 0.95rem; font-weight: 800; margin-bottom: 2px; }
+        .res-info p { font-size: 0.75rem; color: var(--sub); }
     </style>
 </head>
 <body>
@@ -72,7 +79,7 @@
         <header>
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <h1 style="font-weight:900; font-size:1.3rem; letter-spacing:-0.05em;">MADEIRA 2026</h1>
-                <span id="p-text" style="font-size:0.9rem; font-weight:900; color:var(--apple-accent);">0%</span>
+                <span id="p-text" style="font-size:0.9rem; font-weight:900; color:var(--accent);">0%</span>
             </div>
             <div class="prog-container"><div id="p-bar" class="prog-fill"></div></div>
         </header>
@@ -81,96 +88,136 @@
             <button class="day-btn" onclick="setDay(2)">Día 2</button>
             <button class="day-btn" onclick="setDay(3)">Día 3</button>
             <button class="day-btn" onclick="setDay(4)">Día 4</button>
+            <button class="day-btn btn-gast" onclick="showGast()">GUÍA 🐟</button>
         </div>
-        <div id="t-list" class="task-list"></div>
-        <div class="float-btn" onclick="toggleRes()"><span>GASTRONÓMICA 🐟</span> <i class="ph-bold ph-caret-up"></i></div>
+        <div id="content-area">
+            <div id="t-list" class="task-list"></div>
+        </div>
     </div>
     <div class="right-panel"><svg id="madeira-map" viewBox="0 0 1200 600"></svg></div>
-
-    <div id="res-page">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h1 style="font-size:3rem; font-weight:950;">Comer 🐟</h1>
-            <button onclick="toggleRes()" style="width:60px; height:60px; background:#f2f2f7; border-radius:50%; border:none; cursor:pointer;"><i class="ph-bold ph-x"></i></button>
-        </div>
-        <div style="margin-top:40px; font-size:1.5rem; line-height:2;">
-            <p>⭐️ <b>Bela 5 Snack Bar</b> (Must Go según Claudia)</p>
-            <p>🍦 <b>Beer Garden</b> (Nikita & Beer)</p>
-            <p>🍔 <b>Frágil Smash Burger</b> (Cena Funchal)</p>
-        </div>
-    </div>
 
     <script>
         const itinerary = [
             { d: 1, pts: [
-                { id: "d1-v", t: "06:05", title: "Vuelo Madeira", lat: 32.693, lng: -16.772, desc: "Aterrizaje volcánico.", img: "https://images.unsplash.com/photo-1554101150-84f932df225e?auto=format&fit=crop&q=80&w=600" },
-                { id: "d1-hotel", t: "08:30", title: "Funchal Stay", lat: 32.650, lng: -16.908, d: "15 min 🚗", desc: "Base de operaciones.", img: "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&q=80&w=600" },
-                { id: "d1-cr7", t: "12:00", title: "Museo CR7", lat: 32.644, lng: -16.914, d: "10 min 🚗", desc: "El origen de la leyenda.", img: "https://images.unsplash.com/photo-1620311316492-c2830f3c5597?auto=format&fit=crop&q=80&w=600" },
-                { id: "d1-monte", t: "16:00", title: "Teleférico Monte", lat: 32.675, lng: -16.903, d: "Subida 🚠", desc: "Vistas y Jardines Palace.", img: "https://images.unsplash.com/photo-1628080644347-19d26852bb07?auto=format&fit=crop&q=80&w=600" }
+                { id: "d1-v", t: "06:05", title: "Vuelo Madeira", lat: 32.693, lng: -16.772, desc: "✈️ Aterrizaje volcánico.", img: "https://images.unsplash.com/photo-1554101150-84f932df225e?q=80&w=600" },
+                { id: "d1-c", t: "08:30", title: "Alojamiento", lat: 32.650, lng: -16.908, d: "15-20 min 🚗", desc: "Check-in Funchal.", img: "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?q=80&w=600" },
+                { id: "d1-f", t: "MAÑANA", title: "Centro Funchal", lat: 32.648, lng: -16.908, d: "5 min 🚶‍♂️", desc: "Casco antiguo & Rua Santa Maria.", img: "https://images.unsplash.com/photo-1628080644347-19d26852bb07?q=80&w=600" },
+                { id: "d1-cr7", t: "MEDIODIA", title: "Museo CR7", lat: 32.644, lng: -16.914, d: "10 min 🚶‍♂️", desc: "Estatua de la leyenda.", img: "https://images.unsplash.com/photo-1620311316492-c2830f3c5597?q=80&w=600" },
+                { id: "d1-m", t: "TARDE", title: "Monte Palace", lat: 32.675, lng: -16.903, d: "Teleférico 🚠", desc: "Vistas y paseo (1.5h).", img: "https://images.unsplash.com/photo-1628080644128-4bc2e38c92b2?q=80&w=600" },
+                { id: "d1-p", t: "NOCHE", title: "Puerto Funchal", lat: 32.643, lng: -16.911, d: "Bajada 🛷", desc: "Beer Garden & Nikita.", img: "https://images.unsplash.com/photo-1518155317743-a8ff43ea6f5f?q=80&w=600" }
             ]},
             { d: 2, pts: [
-                { id: "d2-b", t: "09:00", title: "Puerto Funchal", lat: 32.643, lng: -16.911, desc: "Delfines y Ballenas.", img: "https://images.unsplash.com/photo-1518155317743-a8ff43ea6f5f?auto=format&fit=crop&q=80&w=600" },
-                { id: "d2-areeiro", t: "15:00", title: "Pico do Areeiro", lat: 32.735, lng: -16.928, d: "40 min 🚗", desc: "Caminando sobre nubes.", img: "https://images.unsplash.com/photo-1628080644128-4bc2e38c92b2?auto=format&fit=crop&q=80&w=600" },
-                { id: "d2-g", t: "17:30", title: "Cristo Rei", lat: 32.636, lng: -16.852, d: "25 min 🚗", desc: "Mirador del Garajau.", img: "https://images.unsplash.com/photo-1628080644024-bc7b36a7edc8?auto=format&fit=crop&q=80&w=600" }
+                { id: "d2-b", t: "09:00", title: "Funchal Puerto", lat: 32.643, lng: -16.911, desc: "Delfines y Ballenas (3h).", img: "https://images.unsplash.com/photo-1518155317743-a8ff43ea6f5f?q=80&w=600" },
+                { id: "d2-a", t: "15:00", title: "Pico do Areeiro", lat: 32.735, lng: -16.928, d: "40 min 🚗", desc: "Techo de Madeira (1818m).", img: "https://images.unsplash.com/photo-1628080644128-4bc2e38c92b2?q=80&w=600" },
+                { id: "d2-g", t: "17:30", title: "Cristo Rei", lat: 32.636, lng: -16.852, d: "25 min 🚗", desc: "Mirador del Garajau.", img: "https://images.unsplash.com/photo-1628080644024-bc7b36a7edc8?q=80&w=600" },
+                { id: "d2-pc", t: "18:30", title: "Porto da Cruz", lat: 32.776, lng: -16.829, d: "25 min 🚗", desc: "Surf & Bikini 👙.", img: "https://images.unsplash.com/photo-1614777556730-e8869c9ff4c2?q=80&w=600" }
             ]},
             { d: 3, pts: [
-                { id: "d3-girao", t: "09:00", title: "Cabo Girão", lat: 32.656, lng: -17.006, d: "22 min 🚗", desc: "Acantilado de cristal.", img: "https://images.unsplash.com/photo-1614777556730-e8869c9ff4c2?auto=format&fit=crop&q=80&w=600" },
-                { id: "d3-anjos", t: "12:00", title: "Cascata Anjos", lat: 32.682, lng: -17.114, d: "20 min 🚗", desc: "Lavado de coche natural.", img: "https://images.unsplash.com/photo-1628080644347-19d26852bb07?auto=format&fit=crop&q=80&w=600" },
-                { id: "d3-seixal", t: "14:30", title: "Praia Seixal", lat: 32.825, lng: -17.103, d: "40 min 🚗", desc: "Bikini y Arena Negra.", img: "https://images.unsplash.com/photo-1590523278191-995ccd138e48?auto=format&fit=crop&q=80&w=600" },
-                { id: "d3-pm", t: "16:30", title: "Porto Moniz", lat: 32.868, lng: -17.172, d: "15 min 🚗", desc: "Piscinas volcánicas.", img: "https://images.unsplash.com/photo-1614777556606-ba7b4f305ed9?auto=format&fit=crop&q=80&w=600" }
+                { id: "d3-g", t: "09:00", title: "Cabo Girão", lat: 32.656, lng: -17.006, d: "22 min 🚗", desc: "Skywalk de cristal.", img: "https://images.unsplash.com/photo-1614777556730-e8869c9ff4c2?q=80&w=600" },
+                { id: "d3-cl", t: "10:30", title: "Cámara Lobos", lat: 32.649, lng: -16.974, d: "10 min 🚗", desc: "Pueblo pintoresco.", img: "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?q=80&w=600" },
+                { id: "d3-ps", t: "12:00", title: "Ponta do Sol", lat: 32.678, lng: -17.106, d: "19 min 🚗", desc: "Digital Nomad Hub.", img: "https://images.unsplash.com/photo-1628080644347-19d26852bb07?q=80&w=600" },
+                { id: "d3-aj", t: "13:00", title: "Cascata Anjos", lat: 32.682, lng: -17.114, d: "8 min 🚗", desc: "Cascada en carretera.", img: "https://images.unsplash.com/photo-1628080644128-4bc2e38c92b2?q=80&w=600" },
+                { id: "d3-sx", t: "TARDE", title: "Seixal Beach", lat: 32.825, lng: -17.103, d: "40 min 🚗", desc: "Veu da Noiva.", img: "https://images.unsplash.com/photo-1590523278191-995ccd138e48?q=80&w=600" },
+                { id: "d3-pm", t: "16:30", title: "Porto Moniz", lat: 32.868, lng: -17.172, d: "15 min 🚗", desc: "Piscinas naturales.", img: "https://images.unsplash.com/photo-1614777556606-ba7b4f305ed9?q=80&w=600" },
+                { id: "d3-ac", t: "18:30", title: "Achadas Cruz", lat: 32.852, lng: -17.208, d: "20 min 🚗", desc: "Teleférico extremo.", img: "https://images.unsplash.com/photo-1628080644347-19d26852bb07?q=80&w=600" }
             ]},
             { d: 4, pts: [
-                { id: "d4-sl", t: "09:30", title: "São Lourenço", lat: 32.743, lng: -16.701, d: "40 min 🚗", desc: "El fin del mundo.", img: "https://images.unsplash.com/photo-1628080644024-bc7b36a7edc8?auto=format&fit=crop&q=80&w=600" },
-                { id: "d4-st", t: "12:30", title: "Santana Houses", lat: 32.805, lng: -16.883, d: "30 min 🚗", desc: "Cultura y arquitectura.", img: "https://images.unsplash.com/photo-1628080644105-bc7b36a7edc8?auto=format&fit=crop&q=80&w=600" },
-                { id: "d4-rj", t: "16:00", title: "Tirolina Janela", lat: 32.852, lng: -17.151, d: "50 min 🚗", desc: "Adrenalina pura.", img: "https://images.unsplash.com/photo-1628080644347-19d26852bb07?auto=format&fit=crop&q=80&w=600" }
+                { id: "d4-sl", t: "PRONTO", title: "São Lourenço", lat: 32.743, lng: -16.701, d: "39 min 🚗", desc: "Trekking volcánico (2h).", img: "https://images.unsplash.com/photo-1628080644024-bc7b36a7edc8?q=80&w=600" },
+                { id: "d4-st", t: "MAÑANA", title: "Santana Houses", lat: 32.805, lng: -16.883, d: "32 min 🚗", desc: "Arquitectura tradicional.", img: "https://images.unsplash.com/photo-1628080644105-bc7b36a7edc8?q=80&w=600" },
+                { id: "d4-com", t: "14:00", title: "Cabo Aéreo", lat: 32.812, lng: -16.892, d: "10 min 🚗", desc: "🥘 Reservar Café Santana.", img: "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?q=80&w=600" },
+                { id: "d4-fn", t: "TARDE", title: "Fanal Forest", lat: 32.808, lng: -17.141, d: "45 min 🚗", desc: "🌳 Bosque milenario.", img: "https://images.unsplash.com/photo-1628080644347-19d26852bb07?q=80&w=600" },
+                { id: "d4-tir", t: "17:30", title: "Ribeira Janela", lat: 32.852, lng: -17.151, d: "56 min 🚗", desc: "Tirolina extrema.", img: "https://images.unsplash.com/photo-1628080644128-4bc2e38c92b2?q=80&w=600" },
+                { id: "d4-faj", t: "18:30", title: "Fajã Rodrigues", lat: 32.784, lng: -17.042, d: "39 min 🚗", desc: "Mini caminata opcional.", img: "https://images.unsplash.com/photo-1628080644024-bc7b36a7edc8?q=80&w=600" }
             ]}
         ];
-        let done = JSON.parse(localStorage.getItem('md_26')) || {};
-        let active = 1;
 
-        // Accurate Madeira Silhoute according to provided reference image
-        const islandPts = [[-17.26, 32.86], [-17.20, 32.90], [-17.12, 32.87], [-17.02, 32.84], [-16.92, 32.84], [-16.82, 32.82], [-16.72, 32.77], [-16.65, 32.74], [-16.70, 32.72], [-16.76, 32.72], [-16.86, 32.69], [-16.96, 32.63], [-17.08, 32.64], [-17.18, 32.68], [-17.22, 32.75], [-17.26, 32.86]];
-        const proj = d3.geoMercator().center([-16.95, 32.75]).scale(70000).translate([600, 330]);
-        const drawLine = d3.line().x(p=>proj(p)[0]).y(p=>proj(p)[1]).curve(d3.curveBasis);
+        const restaurants = [
+            { n: "Bela 5 Snack Bar", d: "10/10 (Claudia) - Imprescindible", icon: "⭐️", q: "Bela 5 Snack Bar Funchal" },
+            { n: "Beer Garden", d: "Prueba la Nikita", icon: "🍺", q: "Beer Garden Funchal" },
+            { n: "Frágil Smash Burger", d: "Las mejores burgers", icon: "🍔", q: "Frágil Smash Burger Funchal" },
+            { n: "Mercearia Dona Mecia", d: "Desayuno de reyes", icon: "☕️", q: "Mercearia Dona Mecia Funchal" },
+            { n: "Barreirinha Café", d: "Vistas y chill out", icon: "🌊", q: "Barreirinha Café Funchal" },
+            { n: "Cabo Aéreo Café", d: "Lunch con vistas en Santana", icon: "🥘", q: "Cabo Aéreo Café Santana" }
+        ];
 
-        function setDay(n) { active = n; document.querySelectorAll('.day-btn').forEach((b,i)=>b.classList.toggle('active',i+1===n)); render(); drawMap(); }
+        let doneIds = JSON.parse(localStorage.getItem('mp_26_final')) || {};
+        let activeD = 1;
 
-        function render() {
-            const list = document.getElementById('t-list'); list.innerHTML = '';
-            const day = itinerary.find(i => i.d === active);
-            day.pts.forEach(p => {
-                const card = document.createElement('div'); card.className = `task-card ${done[p.id]?'done':''}`;
-                card.style.backgroundImage = `url('${p.img}')`;
-                card.onclick = () => toggle(p.id);
-                card.innerHTML = `<div class="check-circle"><i class="ph-bold ph-check"></i></div><a href="https://maps.google.com/?daddr=${encodeURIComponent(p.title+', Madeira')}" class="btn-maps" onclick="event.stopPropagation()"><i class="ph-bold ph-navigation-arrow"></i></a><div class="card-content"><div class="card-meta"><span>${p.t}</span>${p.d?`<span style="color:#00ff88;"><i class="ph-fill ph-car"></i> ${p.d}</span>`:''}</div><div class="card-title">${p.title}</div><p class="card-desc">${p.desc}</p></div>`;
-                list.appendChild(card);
+        // Accurate High-Fidelity Silhouette
+        const mPts = [[-17.26,32.86],[-17.20,32.90],[-17.12,32.88],[-17.05,32.86],[-16.95,32.84],[-16.85,32.84],[-16.74,32.78],[-16.65,32.75],[-16.70,32.72],[-16.76,32.72],[-16.86,32.69],[-16.96,32.63],[-17.10,32.64],[-17.18,32.68],[-17.22,32.75],[-17.26,32.86]];
+        const proj = d3.geoMercator().center([-16.95, 32.75]).scale(90000).translate([600, 310]);
+        const dL = d3.line().x(p=>proj(p)[0]).y(p=>proj(p)[1]).curve(d3.curveBasis);
+
+        function setDay(n) {
+            activeD = n;
+            document.querySelectorAll('.day-btn').forEach((b,i)=> {
+                b.classList.toggle('active', i+1 === n);
             });
-            updateProg();
+            render();
+            document.querySelector('.left-panel').scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function showGast() {
+            document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.btn-gast').classList.add('active');
+            const list = document.getElementById('t-list');
+            list.innerHTML = '<div class="res-list"></div>';
+            const gr = list.querySelector('.res-list');
+            restaurants.forEach(r => {
+                const card = document.createElement('div');
+                card.className = 'res-card';
+                card.onclick = () => window.open(`https://maps.google.com/?q=${encodeURIComponent(r.q)}`, '_blank');
+                card.innerHTML = `<div class="res-img">${r.icon}</div><div class="res-info"><h3>${r.n}</h3><p>${r.d}</p></div><i class="ph-bold ph-map-pin" style="margin-left:auto; color:var(--accent);"></i>`;
+                gr.appendChild(card);
+            });
         }
 
         function drawMap() {
             const svg = d3.select("#madeira-map"); svg.selectAll("*").remove();
-            svg.append("path").attr("d", drawLine(islandPts)).attr("class", "island-shape");
-            const d = itinerary.find(i => i.d === active); const pts = d.pts.map(p => [p.lng, p.lat]);
-            // Highlight active day route (wider)
-            svg.append("path").attr("d", drawLine(pts)).attr("class", "route-path");
-            let lIdx = -1; d.pts.forEach((p,i)=>{ if(done[p.id]) lIdx = i; });
-            if(lIdx > 0) svg.append("path").attr("d", drawLine(pts.slice(0, lIdx+1))).attr("class", "route-solid");
+            svg.append("path").attr("d", dL(mPts)).attr("class", "island-shape");
+            const d = itinerary.find(i=>i.d===activeD);
+            if(!d || document.querySelector('.btn-gast.active')) return;
+            const pts = d.pts.map(p=>[p.lng, p.lat]);
+            svg.append("path").attr("d", dL(pts)).attr("class", "route-path");
+            let lIdx = -1; d.pts.forEach((p,i)=>{ if(doneIds[p.id]) lIdx = i; });
+            if(lIdx > 0) svg.append("path").attr("d", dL(pts.slice(0, lIdx+1))).attr("class", "route-solid");
             d.pts.forEach((p,i) => {
                 const [x,y] = proj([p.lng, p.lat]);
-                svg.append("circle").attr("cx",x).attr("cy",y).attr("r",7).attr("class",`map-marker ${done[p.id]?'done':''}`).on("click",()=>toggle(p.id));
-                // Anti-collision offset for labels
-                let yOff = -18; if(i%2!==0) yOff = 25;
+                svg.append("circle").attr("cx",x).attr("cy",y).attr("r",7).attr("class",`map-marker ${doneIds[p.id]?'done':''}`).on("click",()=>toggle(p.id));
+                let yOff = -15; if(i%2!==0) yOff = 22;
                 svg.append("text").attr("x",x).attr("y",y+yOff).attr("class","map-label").attr("text-anchor","middle").text(p.title);
             });
         }
 
-        function toggle(id) { if(done[id]) delete done[id]; else done[id]=true; localStorage.setItem('md_26', JSON.stringify(done)); render(); drawMap(); }
+        function render() {
+            const container = document.getElementById('t-list'); container.innerHTML = '';
+            const day = itinerary.find(i=>i.d===activeD);
+            day.pts.forEach(p => {
+                const card = document.createElement('div');
+                card.className = `task-card ${doneIds[p.id]?'done':''}`;
+                card.style.backgroundImage = `url('${p.img}')`;
+                card.onclick = () => toggle(p.id);
+                card.innerHTML = `<div class="check-circle"><i class="ph-bold ph-check"></i></div><a href="https://maps.google.com/?daddr=${encodeURIComponent(p.title+', Madeira')}" class="btn-maps" onclick="event.stopPropagation()"><i class="ph-bold ph-navigation-arrow"></i></a><div class="card-content"><div class="card-meta"><span>${p.t}</span>${p.d?`<span style="color:#00ff88;"><i class="ph-fill ph-car"></i> ${p.d}</span>`:''}</div><div class="card-title">${p.title}</div><p class="card-desc">${p.desc}</p></div>`;
+                container.appendChild(card);
+            });
+            updateProg();
+            drawMap();
+        }
+
+        function toggle(id) {
+            if(doneIds[id]) delete doneIds[id];
+            else { doneIds[id] = true; if(window.navigator.vibrate) window.navigator.vibrate(10); }
+            localStorage.setItem('mp_26_final', JSON.stringify(doneIds));
+            render();
+        }
+
         function updateProg() {
             let total = 0; itinerary.forEach(i=>total+=i.pts.length);
-            const count = Object.keys(done).length; const p = Math.round((count/total)*100);
-            document.getElementById('p-bar').style.width = p+'%'; document.getElementById('p-text').innerText = p+'%';
+            const count = Object.keys(doneIds).length;
+            const p = Math.round((count/total)*100);
+            document.getElementById('p-bar').style.width = p+'%';
+            document.getElementById('p-text').innerText = p+'%';
         }
-        function toggleRes() { const s = document.getElementById('res-page').style; s.display = s.display==='block'?'none':'block'; }
         setDay(1);
     </script>
 </body>
